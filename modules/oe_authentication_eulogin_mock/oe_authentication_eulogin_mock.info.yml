@@ -4,4 +4,5 @@ package: OpenEuropa
 type: module
 core: 8.x
 dependencies:
+  - cas:cas
   - cas_mock_server:cas_mock_server
