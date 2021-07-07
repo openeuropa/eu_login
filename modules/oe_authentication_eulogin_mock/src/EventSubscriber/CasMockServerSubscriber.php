@@ -48,7 +48,21 @@ class CasMockServerSubscriber implements EventSubscriberInterface {
     // Add the attributes one level up.
     foreach ($event->getUserData() as $key => $value) {
       $attribute = $dom->createElement("cas:$key");
-      $attribute->textContent = $value;
+      // If the response has a "groups" key, each group
+      // needs to be in an individual element so it is
+      // processed as an array down the line.
+      if ($key === "groups") {
+        $groups = array_map('trim', explode(',', $value));
+        $attribute->setAttribute('number', (string) count($groups));
+        foreach ($groups as $index => $group) {
+          $group = $dom->createElement("cas:group");
+          $group->textContent = $value;
+          $attribute->appendChild($group);
+        }
+      }
+      else {
+        $attribute->textContent = $value;
+      }
       $authentication_success->appendChild($attribute);
     }
   }
